@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 // 使用schema构造器创建一个新的模式实例
 const bookingSchema = new mongoose.Schema({
-    _id:{
-        type: String,
-        uppercase: true,
-        alias: 'code'
-    },
+    // _id:{
+    //     type: String,
+    //     uppercase: true,
+    //     alias: 'code'
+    // },
     tour:{
         // ObjectId：特定对象的唯一id
-        // type: mongoose.Schema.ObejctId,
         type: String,
+        // type: mongoose.Schema.ObjectId,
         ref: 'Tour',
         required: [true, 'Booking must belong to a Tour!']
     },
@@ -21,7 +21,7 @@ const bookingSchema = new mongoose.Schema({
     },
     price: {
         type: Number,
-        require: [true, 'Booking must have a price.']
+        required: [true, 'Booking must have a price.']
       },
     createDate: {
         type: Date,

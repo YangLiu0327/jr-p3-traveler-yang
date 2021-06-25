@@ -1,28 +1,131 @@
-const supertest = require("supertest");
-// const app = require("../../loaders/express"); //导入错了
-const app = require("../../../app"); //正确写法
-const Booking = require("../../models/booking");
-const { connectToDB, disconnectDB } = require("../../loaders/mongoose");
+const supertest = require('supertest');
+// const app = require('../../loaders/express');
+const app = require('../../../app');
+const Booking = require('../../models/booking');
+const { connectToDB, disconnectDB } = require('../../loaders/mongoose');
+const { getBooking } = require('../../controllers/api/v1/bookings');
 
 // jest.useFakeTimers()
 
 //  这里的app是express里创建的app
 const request = supertest(app);
 
-it("should return 201 if request is valid", async () => {
-  // serve 要和数据库先连接上
-  connectToDB();
-  // console.log("xxxxxxxxx");
-  const res = await request
-    // .post("api/v1/bookings") //路径错了
-    .post("/api/v1/bookings") //正确写法
-    // .send({ user: "yang", tour: "sydney" }); //body 错了
-    .send({ code: "22222", user: "yang", tour: "sydney" }); //正确写法
-  expect(res.statusCode).toBe(201);
+// post
+it('should return 201 if request is valid',  async () => {
+    // serve 要和数据库先连接上
+    connectToDB();
+    // console.log("xxxxxxxxx");
+    const res = await request 
+        .post("/api/v1/bookings") 
+        .send({user: "yang", tour: "sydney", price: 200}); // code: 77
+        expect(res.statusCode).toBe(201);
+})
+// get all
+it('should return 200 if request is valid', async ()=>{
+    connectToDB();
+    const res = await request
+    .get("/api/v1/bookings")
+    expect(res.statusCode).toBe(200);
+})
+// get by id 
+it('should return 200 if request is valid', async ()=>{
+    connectToDB();
+    const res = await request
+    .get("/api/v1/bookings/60d57b53c41beef9556623eb")
+    expect(res.statusCode).toBe(200);
+})
+// put
+it('should return 200 if request is valid', async ()=>{
+    connectToDB();
+    const res = await request
+    .put("/api/v1/bookings/60d57b53c41beef9556623eb")
+    .send({price: 300})
+    expect(res.body.data.data.price).toBe(300);
+    expect(res.statusCode).toBe(200);
+})
+
+// delete 
+// it('should return 200 if request is valid', async ()=>{
+//     connectToDB();
+//     const res = await request
+//     .delete("/api/v1/bookings/60d57fe5f28c6402f3ab177d")
+//     expect(res.statusCode).toBe(204);
+// })
+
+
+
+
+ describe('/bookings',()=>{
+  beforeAll(()=>{
+       connectToDB();
+         });
+  afterAll(async ()=>{
+        await disconnectDB();
+     });
+//     beforeEach(async () => {
+//         await Booking.deleteMany({});
+//       });
+    
+//     afterEach(async () => {
+//         await Booking.deleteMany({});
+//       });
+
+ describe('POST', () => {
+    const validBooking = {
+      user: "yang2",
+      tour: "sydney", 
+      price: 200
+    };
+
+    const createBooking = async (body) => {
+      return request.post('/api/v1/bookings').send(body);
+    };
+
+    it('should return 201 if request is valid', async () => {
+      const res = await createBooking(validBooking);
+      expect(res.statusCode).toBe(201);
+    });
+    it('should save booking to database if request is valid', async () => {
+        await createBooking(validBooking);
+        const booking = await Booking.findOne({ user: validBooking.user });
+        expect(booking.price).toBe(validBooking.price);
+        expect(booking.user).toBe(validBooking.user);
+        expect(booking.tour).toBe(validBooking.tour);
+      });
+
+
 });
 
-// npm test
-// npm run test:watch
+
+// describe('PUT /bookings/60d5739f69668bedaf04afde', () => {
+//     it('responds with an updated booking', async () => {
+//       const newBooking = await request
+//         .post("/api/v1/bookings")
+//         .send({
+//           price: 300
+//         });
+//       const updatedBooking= await request
+//         .put(`/bookings/${newBooking.body.id}`)
+//       expect(updatedBooking.body.price).toBe(300);
+//       expect(updatedBooking.statusCode).toBe(200);
+  
+//     //   const res = await request.get('/api/v1/bookings/60d5739f69668bedaf04afde');
+//     });
+//   });
+
+// describe('GET',()=>{
+//     it('should respond with an array of bookings', async ()=>{
+//         const res = await request.get('/api/v1/bookings');
+//         expect(res.body).toEqual({"data": {"data": []}, "status": "success"})
+//         expect(res.statusCode).toBe(200);
+//     });
+// })
+
+})
+
+
+
+
 
 
 

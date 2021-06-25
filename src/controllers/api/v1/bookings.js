@@ -5,26 +5,26 @@ const Joi = require('joi');
 
 
 async function createBooking(req,res){
-  const {tour, user, paid} = req.body;
-  const schema = Joi.object({
-    code: Joi.string()
-    .regex(/^[a-zA-Z0-9]+$/)
-    .required(),
-  });
+  const {tour, user, paid, price} = req.body;
+  // const schema = Joi.object({
+  //   code: Joi.string()
+  //   .regex(/^[a-zA-Z0-9]+$/)
+  //   .required(),
+  // });
 
-  const { code } = await schema.validateAsync(req.body, {
-    allowUnknown: true,
-    stripUnknown: true,
-    abortEarly: false
-  });
+  // const { code } = await schema.validateAsync(req.body, {
+  //   allowUnknown: true,
+  //   stripUnknown: true,
+  //   abortEarly: false
+  // });
 
-  const existingBooking = await Booking.findById(code).exec();
-  if(existingBooking){
-    return res.status(409).json('Booking already exist');
-  }
+  // const existingBooking = await Booking.findById(code).exec();
+  // if(existingBooking){
+  //   return res.status(409).json('Booking already exist');
+  // }
   
 
-  const booking = new Booking({ _id:code, tour, user, paid})
+  const booking = new Booking({tour, user, paid, price})  // _id:code,
   try {
     await booking.save();
     res.status(201).send({ booking });
@@ -69,10 +69,10 @@ async function getAllBookings(req,res){
 
 async function updateBooking(req,res){
     const{ id } = req.params;
-    const { tour, user, paid } = req.body;
+    const { tour, user, paid, price } = req.body;
     const booking = await Booking.findByIdAndUpdate(
         id, 
-        { tour, user, paid },
+        { tour, user, paid, price},
         { new: true }
     );
     if (!booking){
