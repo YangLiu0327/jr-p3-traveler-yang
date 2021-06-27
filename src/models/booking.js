@@ -16,6 +16,7 @@ const bookingSchema = new mongoose.Schema({
     user:{
          // type: mongoose.Schema.ObejctId,
         type: String,
+        // ref 选项告诉 Mongoose 在填充的时候使用哪个 model
         ref: 'User',
         required: [true, 'Booking must belong to a User!']
     },
@@ -34,12 +35,13 @@ const bookingSchema = new mongoose.Schema({
 });
 
 // bookingSchema.pre(/^find/, function(next){
+    // populate user, tour
 //  this.populate('User').populate({
 //    path: 'tour',
-//    select: 'name',
+//    select: 'city',
 // });
 // next();
-//})
+// })
 // 使用模式编译模型
 const Booking = mongoose.model('Booking', bookingSchema);
 

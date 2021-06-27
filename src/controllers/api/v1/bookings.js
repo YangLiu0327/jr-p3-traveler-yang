@@ -6,24 +6,7 @@ const Joi = require('joi');
 
 async function createBooking(req,res){
   const {tour, user, paid, price} = req.body;
-  // const schema = Joi.object({
-  //   code: Joi.string()
-  //   .regex(/^[a-zA-Z0-9]+$/)
-  //   .required(),
-  // });
-
-  // const { code } = await schema.validateAsync(req.body, {
-  //   allowUnknown: true,
-  //   stripUnknown: true,
-  //   abortEarly: false
-  // });
-
-  // const existingBooking = await Booking.findById(code).exec();
-  // if(existingBooking){
-  //   return res.status(409).json('Booking already exist');
-  // }
-  
-
+ 
   const booking = new Booking({tour, user, paid, price})  // _id:code,
   try {
     await booking.save();
@@ -107,8 +90,18 @@ async function deleteBooking(req,res){
     res.status(400).send(e);
   }
 }
-
-
+// 看看这个user下面的booking tours
+// export async function getMyTours(req,res,next){
+//   // find all bookings
+//   const bookings = await Booking.find({user: req.user.id});
+//   // find tours with return ids
+//   const tourIDs = bookings.map(el=>el.tour);
+//   const tours = await Tour.find({_id: { $in: tourIDs }});
+//   res.status(200).render('overview',{
+//     title: 'My Tours',
+//     tours
+//   });
+// }
 
 module.exports = {
     createBooking,

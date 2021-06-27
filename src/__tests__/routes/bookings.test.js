@@ -17,14 +17,24 @@ it('should return 201 if request is valid',  async () => {
     // console.log("xxxxxxxxx");
     const res = await request 
         .post("/api/v1/bookings") 
-        .send({user: "yang", tour: "sydney", price: 200}); // code: 77
+        .send({user: "yang", tour: "sydney", price: 250}); // code: 77
+        expect(res.body.booking).toHaveProperty("_id");
+        expect(res.body.booking.user).toBe("yang");
+        expect(res.body.booking.tour).toBe("sydney");
+        expect(res.body.booking.price).toBe(250);
         expect(res.statusCode).toBe(201);
-})
+})  
 // get all
 it('should return 200 if request is valid', async ()=>{
     connectToDB();
     const res = await request
     .get("/api/v1/bookings")
+    expect(res.body.data.data[5]).toHaveProperty("price");
+    expect(res.body.data.data[4]).toHaveProperty("user");
+    expect(res.body.data.data[3]).toHaveProperty("tour");
+    expect(res.body.data.data[2]).toHaveProperty("_id");
+    expect(res.body.data.data[1]).toHaveProperty("paid");
+    expect(res.body.data.data[0]).toHaveProperty("createDate");
     expect(res.statusCode).toBe(200);
 })
 // get by id 
@@ -87,14 +97,15 @@ it('should return 200 if request is valid', async ()=>{
     });
     it('should save booking to database if request is valid', async () => {
         await createBooking(validBooking);
-        const booking = await Booking.findOne({ user: validBooking.user });
+        // find one booking 
+        const booking = await Booking.findOne({user: validBooking.user }); 
         expect(booking.price).toBe(validBooking.price);
         expect(booking.user).toBe(validBooking.user);
         expect(booking.tour).toBe(validBooking.tour);
       });
-
-
 });
+
+
 
 
 // describe('PUT /bookings/60d5739f69668bedaf04afde', () => {
@@ -113,13 +124,6 @@ it('should return 200 if request is valid', async ()=>{
 //     });
 //   });
 
-// describe('GET',()=>{
-//     it('should respond with an array of bookings', async ()=>{
-//         const res = await request.get('/api/v1/bookings');
-//         expect(res.body).toEqual({"data": {"data": []}, "status": "success"})
-//         expect(res.statusCode).toBe(200);
-//     });
-// })
 
 })
 
